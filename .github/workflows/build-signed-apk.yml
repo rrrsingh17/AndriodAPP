@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build Signed Android APK
 
 on:
   push:
@@ -34,19 +34,29 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    - name: Build with Gradle
+    - name: Build Release APK
       run: ./gradlew assembleRelease --no-daemon
       
-    - name: Upload APK as Artifact
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug --no-daemon
+      
+    - name: Upload Release APK
       uses: actions/upload-artifact@v4
       with:
-        name: OfflineDayPlanner-APK
+        name: OfflineDayPlanner-Release-APK
         path: app/build/outputs/apk/release/app-release.apk
-        retention-days: 30
+        retention-days: 90
         
-    - name: Upload Debug APK as Artifact
+    - name: Upload Debug APK
       uses: actions/upload-artifact@v4
       with:
         name: OfflineDayPlanner-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
-        retention-days: 30
+        retention-days: 90
+        
+    - name: Get APK Info
+      run: |
+        echo "=== Release APK Info ==="
+        ls -la app/build/outputs/apk/release/
+        echo "=== Debug APK Info ==="
+        ls -la app/build/outputs/apk/debug/
