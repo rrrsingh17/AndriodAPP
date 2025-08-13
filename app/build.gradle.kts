@@ -21,22 +21,18 @@ android {
     
     buildTypes { 
         release { 
-            isMinifyEnabled = true
-            isShrinkResources = true
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("debug") // Use debug signing for now
         }
         debug { 
             isMinifyEnabled = false
             isShrinkResources = false
-            applicationIdSuffix = ".debug"
-            versionNameSuffix = "-debug"
         }
     }
     
     buildFeatures { 
         compose = true
-        buildConfig = true
     }
     
     composeOptions { 
@@ -50,16 +46,6 @@ android {
     packaging { 
         resources { 
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
-    
-    // Enable APK splitting for smaller downloads
-    splits {
-        abi {
-            isEnable = true
-            reset()
-            include("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
-            isUniversalApk = true
         }
     }
 }
