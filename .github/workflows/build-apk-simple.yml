@@ -21,62 +21,15 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         
-    - name: Cache Gradle packages
-      uses: actions/cache@v4
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-          
-    - name: Debug - List files
-      run: |
-        echo "=== Current directory ==="
-        pwd
-        echo "=== Listing files ==="
-        ls -la
-        echo "=== Gradle wrapper files ==="
-        ls -la gradle/wrapper/
-        
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
       
-    - name: Debug - Check gradlew
-      run: |
-        echo "=== Gradlew permissions ==="
-        ls -la gradlew
-        echo "=== Gradlew content (first 10 lines) ==="
-        head -10 gradlew
-        
-    - name: Build with Gradle
-      run: |
-        echo "=== Starting Gradle build ==="
-        ./gradlew assembleRelease --no-daemon --stacktrace --info
-      continue-on-error: true
+    - name: Build Debug APK
+      run: ./gradlew assembleDebug
       
-    - name: Debug - Check build output
-      run: |
-        echo "=== Build directory structure ==="
-        find . -name "*.apk" -type f 2>/dev/null || echo "No APK files found"
-        echo "=== App build directory ==="
-        ls -la app/build/outputs/ 2>/dev/null || echo "No outputs directory"
-        
-    - name: Upload APK as Artifact
+    - name: Upload Debug APK
       uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-        name: OfflineDayPlanner-APK
-        path: app/build/outputs/apk/release/app-release.apk
-        retention-days: 30
-        if-no-files-found: warn
-        
-    - name: Upload Debug APK as Artifact
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
       with:
         name: OfflineDayPlanner-Debug-APK
         path: app/build/outputs/apk/debug/app-debug.apk
         retention-days: 30
-        if-no-files-found: warn
